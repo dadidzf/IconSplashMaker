@@ -27,9 +27,9 @@ Examples:
 
 >To generate Android icon：python tool.py icon icon.jpg android
 
->To generate iOS screenshots：python tool.py screenshot ios
+>To generate iOS screenshots：python tool.py screenshot screenshot.png ios
 
->To generate Android screenshots：python tool.py screenshot android
+>To generate Android screenshots：python tool.py screenshot screenshot.png android
 
 ##Tips
 * You need to prepare a 'mask.png' to crop Android icon. It's size must be (512px,512px) and 70px cornerRadius.
