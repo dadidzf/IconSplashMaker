@@ -60,10 +60,8 @@ def cut_by_ratio(im, outfile, iWidth, iHeight):
     (x, y) = im.size  
 
     if x/width > y/height:
-    	print('>')
     	region = (int((x - width*y/height)/2), 0, int(x - ((x - width*y/height)/2)), y)
     elif x/width < y/height:
-    	print('<')
     	region = (0, int((y - height*x/width)/2), x, int(y - ((y - height*x/width)/2)))
     else:
     	region = (0, 0, x, y)
