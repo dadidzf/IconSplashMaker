@@ -26,6 +26,7 @@ def processIcon(filename,platform):
 	if platform == 'android':
 		#安卓圆角
 		mask = Image.open('mask.png')
+		mask.load()
 		r,g,b,a = mask.split()
 		icon.putalpha(a)
 		if not os.path.isdir('androidIcon'):
@@ -52,6 +53,26 @@ def walk_dir(dir,platform):
 			produceImage(name,platform)
 	print 'Congratulations!It\'s all done!'
 
+def cut_by_ratio(im, outfile, iWidth, iHeight):  
+    """按照图片长宽比进行分割"""  
+    width = float(iWidth)  
+    height = float(iHeight)  
+    (x, y) = im.size  
+
+    if x/width > y/height:
+    	print('>')
+    	region = (int((x - width*y/height)/2), 0, int(x - ((x - width*y/height)/2)), y)
+    elif x/width < y/height:
+    	print('<')
+    	region = (0, int((y - height*x/width)/2), x, int(y - ((y - height*x/width)/2)))
+    else:
+    	region = (0, 0, x, y)
+
+    #裁切图片  
+    crop_img = (im.crop(region)).resize((iWidth, iHeight), Image.ANTIALIAS)
+    #保存裁切后的图片  
+    crop_img.save(outfile)  
+
 def produceImage(filename,platform):
 	print 'Processing:' + filename
 	img = Image.open(filename)
@@ -65,20 +86,19 @@ def produceImage(filename,platform):
 		if not os.path.isdir(folders[index]):
 			os.mkdir(folders[index])
 		if img.size[0] > img.size[1]:#如果是横屏，交换坐标
-			im = img.resize((size[1],size[0]),Image.BILINEAR)
-			im.save(folders[index]+'/'+filename)
+			cut_by_ratio(img, folders[index]+'/'+filename, size[1], size[0])
 		else:
-			im = img.resize(size,Image.BILINEAR)
-			im.save(folders[index]+'/'+filename)
+			cut_by_ratio(img, folders[index]+'/'+filename, size[0], size[1])
 		index = index + 1
 
 action = sys.argv[1]#action:icon or screenshot
 if action == 'screenshot':	
-	platform = sys.argv[2]#platform
+	filename = sys.argv[2]
+	platform = sys.argv[3]#platform
 	if platform == 'ios':
-		walk_dir('./','ios')
+		produceImage(filename, 'ios')
 	elif platform == 'android':
-		walk_dir('./','android')
+		produceImage(filename, 'android')
 	else:
 		print 'Hey,Platform can only be "ios" or "android" !'
 elif action == 'icon':
